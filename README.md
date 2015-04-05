@@ -27,5 +27,5 @@ Example use:
 
 Result:
 
-![](bin/images/subtract.png?raw=true)
+![](bin/images/subtract.PNG?raw=true)
 
