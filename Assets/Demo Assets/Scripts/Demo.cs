@@ -10,25 +10,26 @@ public class Demo : MonoBehaviour
 	GameObject left, right, composite;
 	bool wireframe = false;
 
-	public Material WireframeMaterial = null;
+	public Material wireframeMaterial = null;
+
+	public GameObject[] fodder;	// prefabs containing two mesh children
+	int index = 0;				// the index of example mesh prefabs
 
 	enum BoolOp
 	{
 		Union,
-		Subtract,
+		SubtractLR,
+		SubtractRL,
 		Intersect
 	};
 
 	void Awake()
 	{
-		if(WireframeMaterial == null)
-			WireframeMaterial = new Material(Shader.Find("Custom/Wireframe"));
+		Reset();
 
-		WireframeMaterial.SetFloat("_Opacity", 0);
+		wireframeMaterial.SetFloat("_Opacity", 0);
 		cur_alpha = 0f;
 		dest_alpha = 0f;
-
-		Reset();
 		
 		ToggleWireframe();
 	}
@@ -42,18 +43,17 @@ public class Demo : MonoBehaviour
 		if(left) GameObject.Destroy(left);
 		if(right) GameObject.Destroy(right);
 
-		left = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		right = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		GameObject go = GameObject.Instantiate(fodder[index]);
 
-		left.transform.position = new Vector3(.16f, -.2f, -.1f);
-		right.transform.position = new Vector3(-.25f, .3f, .35f);
-		right.transform.localScale = Vector3.one * 1.3f;
+		left = GameObject.Instantiate( go.transform.GetChild(0).gameObject );
+		right = GameObject.Instantiate( go.transform.GetChild(1).gameObject );
+
+		GameObject.Destroy(go);
+
+		wireframeMaterial = left.GetComponent<MeshRenderer>().sharedMaterial;
 
 		GenerateBarycentric(left);
 		GenerateBarycentric(right);
-
-		left.GetComponent<MeshRenderer>().sharedMaterial = WireframeMaterial;
-		right.GetComponent<MeshRenderer>().sharedMaterial = WireframeMaterial;
 	}
 
 	public void Union()
@@ -62,10 +62,16 @@ public class Demo : MonoBehaviour
 		Boolean( BoolOp.Union );
 	}
 
-	public void Subtraction()
+	public void SubtractionLR()
 	{
 		Reset();
-		Boolean( BoolOp.Subtract );
+		Boolean( BoolOp.SubtractLR );
+	}
+
+	public void SubtractionRL()
+	{
+		Reset();
+		Boolean( BoolOp.SubtractRL );
 	}
 
 	public void Intersection()
@@ -89,12 +95,17 @@ public class Demo : MonoBehaviour
 				m = CSG.Union(left, right);
 				break;
 
-			case BoolOp.Subtract:
+			case BoolOp.SubtractLR:
 				m = CSG.Subtract(left, right);
 				break;
 
+			case BoolOp.SubtractRL:
+				m = CSG.Subtract(right, left);
+				break;
+
+			case BoolOp.Intersect:
 			default:
-				m = CSG.Intersect(right, left);
+				m = CSG.Intersect(right,left);
 				break;
 		}
 
@@ -120,12 +131,23 @@ public class Demo : MonoBehaviour
 		start_time = Time.time;
 	}
 
+	/**
+	 * Swap the current example meshes
+	 */
+	public void ToggleExampleMeshes()
+	{
+		index++;
+		if(index > fodder.Length-1)	index = 0;
+
+		Reset();
+	}
+
 	float wireframe_alpha = 0f, cur_alpha = 0f, dest_alpha = 1f, start_time = 0f;
 
 	void Update()
 	{
 		wireframe_alpha = Mathf.Lerp(cur_alpha, dest_alpha, Time.time - start_time);
-		WireframeMaterial.SetFloat("_Opacity", wireframe_alpha);
+		wireframeMaterial.SetFloat("_Opacity", wireframe_alpha);
 	}
 
 	/**
