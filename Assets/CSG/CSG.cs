@@ -25,10 +25,7 @@ namespace Parabox.CSG
 	 */
 	public class CSG
 	{
-#region Const
-
 		public const float EPSILON = 0.00001f; ///< Tolerance used by `splitPolygon()` to decide if a point is on the plane.
-#endregion
 
 		/**
 		 * Returns a new mesh by merging @lhs with @rhs.
