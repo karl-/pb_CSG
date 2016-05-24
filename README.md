@@ -24,6 +24,7 @@ Example use:
 	// Create a gameObject to render the result
 	composite = new GameObject();
 	composite.AddComponent<MeshFilter>().sharedMesh = m;
+	composite.AddComponent<MeshRenderer>().sharedMaterial = myMaterial;
 
 Result:
 
