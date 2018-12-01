@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Represents a plane in 3d space.  Does not include position.
-	 */
+    /// <summary>
+    /// Represents a plane in 3d space.  Does not include position.
+    /// </summary>
 	class CSG_Plane
 	{
 		public Vector3 normal;
@@ -37,18 +37,26 @@ namespace Parabox.CSG
 			return normal.magnitude > 0f;
 		}
 
+        /// <summary>
+        /// Flip the direction of this plane's normal.
+        /// </summary>
 		public void Flip()
 		{
 			normal *= -1f;
 			w *= -1f;
 		}
 
-		// Split `polygon` by this plane if needed, then put the polygon or polygon
-		// fragments in the appropriate lists. Coplanar polygons go into either
-		// `coplanarFront` or `coplanarBack` depending on their orientation with
-		// respect to this plane. Polygons in front or in back of this plane go into
-		// either `front` or `back`.
-		public void SplitPolygon(CSG_Polygon polygon, List<CSG_Polygon> coplanarFront, List<CSG_Polygon> coplanarBack, List<CSG_Polygon> front, List<CSG_Polygon> back)
+        /// <summary>
+        /// <para>Split `polygon` by this plane if needed, then put the polygon or polygon fragments in the appropriate lists.</para>
+        /// <para>Coplanar polygons go into either `coplanarFront` or `coplanarBack` depending on their orientation with respect to this plane.</para>
+        /// <para>Polygons in front or in back of this plane go into either `front` or `back`.</para>
+        /// </summary>
+        /// <param name="polygon"></param>
+        /// <param name="coplanarFront"></param>
+        /// <param name="coplanarBack"></param>
+        /// <param name="front"></param>
+        /// <param name="back"></param>
+        public void SplitPolygon(CSG_Polygon polygon, List<CSG_Polygon> coplanarFront, List<CSG_Polygon> coplanarBack, List<CSG_Polygon> front, List<CSG_Polygon> back)
 		{
 			// Classify each point as well as the entire polygon into one of the above
 			// four classes.

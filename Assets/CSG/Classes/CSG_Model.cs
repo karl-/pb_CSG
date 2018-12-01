@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Representation of a mesh in CSG terms.  Contains methods for translating to and from UnityEngine.Mesh.
-	 */
+    /// <summary>
+    /// Representation of a mesh in CSG terms. Contains methods for translating to and from UnityEngine.Mesh.
+    /// </summary>
 	class CSG_Model
 	{
 		public List<CSG_Vertex> vertices;
@@ -17,9 +17,10 @@ namespace Parabox.CSG
 			this.indices = new List<int>();
 		}
 
-		/**
-		 * Initialize a CSG_Model with the mesh of a gameObject.
-		 */
+        /// <summary>
+        /// Initialize a CSG_Model with the mesh of a gameObject.
+        /// </summary>
+        /// <param name="go"></param>
 		public CSG_Model(GameObject go)
 		{
 			vertices = new List<CSG_Vertex>();
@@ -40,6 +41,10 @@ namespace Parabox.CSG
 			indices = new List<int>(m.triangles);
 		}
 
+        /// <summary>
+        /// Initialize a CSG_Model with a list of CSG_Polygons.
+        /// </summary>
+        /// <param name="list"></param>
 		public CSG_Model(List<CSG_Polygon> list)
 		{
 			this.vertices = new List<CSG_Vertex>();
@@ -64,6 +69,10 @@ namespace Parabox.CSG
 			}
 		}
 
+        /// <summary>
+        /// Converts a CSG_Model to a list of CSG_Polygons.
+        /// </summary>
+        /// <returns></returns>
 		public List<CSG_Polygon> ToPolygons()
 		{
 			List<CSG_Polygon> list = new List<CSG_Polygon>();
@@ -83,9 +92,10 @@ namespace Parabox.CSG
 			return list;
 		}
 
-		/**
-		 * Converts a CSG_Model to a Unity mesh.
-		 */
+        /// <summary>
+        /// Converts a CSG_Model to a Unity mesh.
+        /// </summary>
+        /// <returns></returns>
 		public Mesh ToMesh()
 		{
 			Mesh m = new Mesh();

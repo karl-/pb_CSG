@@ -3,20 +3,27 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Represents a polygon face with an arbitrary number of vertices.
-	 */
+    /// <summary>
+    /// Represents a polygon face with an arbitrary number of vertices.
+    /// </summary>
 	class CSG_Polygon
 	{
 		public List<CSG_Vertex> vertices;
 		public CSG_Plane plane;
 
+        /// <summary>
+        /// Initialize a CSG_Polygon with a list of CSG_Vertex.
+        /// </summary>
+        /// <param name="list"></param>
 		public CSG_Polygon(List<CSG_Vertex> list)
 		{
 			this.vertices = list;
 			this.plane = new CSG_Plane(list[0].position, list[1].position, list[2].position);
 		}
 
+        /// <summary>
+        /// Flip the direction of this polygon's normal.
+        /// </summary>
 		public void Flip()
 		{
 			this.vertices.Reverse();

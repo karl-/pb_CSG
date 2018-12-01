@@ -35,6 +35,10 @@ namespace Parabox.CSG
 			this.back = back;
 		}
 
+        /// <summary>
+        /// Returns a copy of this BSP tree.
+        /// </summary>
+        /// <returns></returns>
 		public CSG_Node Clone()
 		{
 			CSG_Node clone = new CSG_Node(this.polygons, this.plane, this.front, this.back);
@@ -42,9 +46,11 @@ namespace Parabox.CSG
 			return clone;
 		}
 
-		// Remove all polygons in this BSP tree that are inside the other BSP tree
-		// `bsp`.
-		public void ClipTo(CSG_Node other)
+        /// <summary>
+        /// Remove all polygons in this BSP tree that are inside the other BSP tree 'other'.
+        /// </summary>
+        /// <param name="other"></param>
+        public void ClipTo(CSG_Node other)
 		{
 			this.polygons = other.ClipPolygons(this.polygons);
 
@@ -59,8 +65,10 @@ namespace Parabox.CSG
 			}
 		}
 
-		// Convert solid space to empty space and empty space to solid space.
-		public void Invert()
+        /// <summary>
+        /// Convert solid space in this BPS tree to empty space and empty space to solid space.
+        /// </summary>
+        public void Invert()
 		{	
 			for (int i = 0; i < this.polygons.Count; i++)
 				this.polygons[i].Flip();
@@ -82,11 +90,15 @@ namespace Parabox.CSG
 			this.back = tmp;
 		}
 
-		// Build a BSP tree out of `polygons`. When called on an existing tree, the
-		// new polygons are filtered down to the bottom of the tree and become new
-		// nodes there. Each set of polygons is partitioned using the first polygon
-		// (no heuristic is used to pick a good split).
-		public void Build(List<CSG_Polygon> list)
+        /// <summary>
+        /// <para>Build a BSP tree out of `list`. When called on an existing tree, the
+        /// new polygons are filtered down to the bottom of the tree and become new
+        /// nodes there.</para>
+        /// Each set of polygons is partitioned using the first polygon
+        /// (no heuristic is used to pick a good split).
+        /// </summary>
+        /// <param name="list"></param>
+        public void Build(List<CSG_Polygon> list)
 		{
 			if (list.Count < 1)
 				return;
@@ -127,9 +139,12 @@ namespace Parabox.CSG
 			}
 		}
 
-		// Recursively remove all polygons in `polygons` that are inside this BSP
-		// tree.
-		public List<CSG_Polygon> ClipPolygons(List<CSG_Polygon> list)
+        /// <summary>
+        /// Recursively remove all polygons in `list` that are inside this BSP tree.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public List<CSG_Polygon> ClipPolygons(List<CSG_Polygon> list)
 		{
 			if (!this.plane.Valid())
 			{
@@ -165,8 +180,11 @@ namespace Parabox.CSG
 			return list_front;
 		}
 
-		// Return a list of all polygons in this BSP tree.
-		public List<CSG_Polygon> AllPolygons()
+        /// <summary>
+        /// Return a list of all polygons in this BSP tree.
+        /// </summary>
+        /// <returns></returns>
+        public List<CSG_Polygon> AllPolygons()
 		{
 			List<CSG_Polygon> list = this.polygons;
 			List<CSG_Polygon> list_front = new List<CSG_Polygon>(), list_back = new List<CSG_Polygon>();
@@ -187,11 +205,15 @@ namespace Parabox.CSG
 			return list;
 		}
 
-#region STATIC OPERATIONS
+        #region STATIC OPERATIONS
 
-		// Return a new CSG solid representing space in either this solid or in the
-		// solid `csg`. Neither this solid nor the solid `csg` are modified.
-		public static CSG_Node Union(CSG_Node a1, CSG_Node b1)
+        /// <summary>
+        /// Return a new CSG_Node representing space in either 'a1' or in 'b1'. Neither 'a1' or 'b1' are modified.
+        /// </summary>
+        /// <param name="a1"></param>
+        /// <param name="b1"></param>
+        /// <returns></returns>
+        public static CSG_Node Union(CSG_Node a1, CSG_Node b1)
 		{
 			CSG_Node a = a1.Clone();
 			CSG_Node b = b1.Clone();
@@ -209,9 +231,13 @@ namespace Parabox.CSG
 			return ret;
 		}
 
-		// Return a new CSG solid representing space in this solid but not in the
-		// solid `csg`. Neither this solid nor the solid `csg` are modified.
-		public static CSG_Node Subtract(CSG_Node a1, CSG_Node b1)
+        /// <summary>
+        /// Return a new CSG_Node representing space in 'a1' but not in 'b1'. Neither 'a1' or 'b1' are modified.
+        /// </summary>
+        /// <param name="a1">Subject</param>
+        /// <param name="b1">Operator</param>
+        /// <returns></returns>
+        public static CSG_Node Subtract(CSG_Node a1, CSG_Node b1)
 		{
 			CSG_Node a = a1.Clone();
 			CSG_Node b = b1.Clone();
@@ -232,6 +258,12 @@ namespace Parabox.CSG
 
 		// Return a new CSG solid representing space both this solid and in the
 		// solid `csg`. Neither this solid nor the solid `csg` are modified.
+        /// <summary>
+        /// Return a new CSG_Node representing the space in both 'a1' and in 'b1'
+        /// </summary>
+        /// <param name="a1"></param>
+        /// <param name="b1"></param>
+        /// <returns></returns>
 		public static CSG_Node Intersect(CSG_Node a1, CSG_Node b1)
 		{
 			CSG_Node a = a1.Clone();

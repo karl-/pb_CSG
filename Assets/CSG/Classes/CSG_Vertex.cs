@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Represents a single mesh vertex.  Contains fields for position, color, normal, and textures.
-	 */
+    /// <summary>
+    /// Represents a single mesh vertex. Contains fields for position, color, normal, and textures.
+    /// </summary>
 	struct CSG_Vertex
 	{
 		public Vector3 position;
@@ -20,15 +20,23 @@ namespace Parabox.CSG
 			this.color = color;
 		}
 
+        /// <summary>
+        /// Flip the direction of this vertex's normal.
+        /// </summary>
 		public void Flip()
 		{
 			normal *= -1f;
 		}
 
-		// Create a new vertex between this vertex and `other` by linearly
-		// interpolating all properties using a parameter of `t`. Subclasses should
-		// override this to interpolate additional properties.
-		public static CSG_Vertex Interpolate(CSG_Vertex a, CSG_Vertex b, float t)
+        /// <summary>
+        /// Create a new vertex between 'a' and 'b' by linearly interpolating all properties by `t`.
+        /// Subclasses should override this to interpolate additional properties.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static CSG_Vertex Interpolate(CSG_Vertex a, CSG_Vertex b, float t)
 		{
 			CSG_Vertex ret = new CSG_Vertex();
 
