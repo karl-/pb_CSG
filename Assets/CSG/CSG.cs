@@ -19,18 +19,24 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations.
-	 * The GameObjects passed to these functions will not be modified.
-	 */
-	public class CSG
+    /// <summary>
+    /// Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations.
+    /// The GameObjects passed to these functions will not be modified.
+    /// </summary>
+    public class CSG
 	{
-		public const float EPSILON = 0.00001f; ///< Tolerance used by `splitPolygon()` to decide if a point is on the plane.
+        /// <summary>
+        /// Tolerance used by `splitPolygon()` to decide if a point is on the plane.
+        /// </summary>
+        public const float EPSILON = 0.00001f;
 
-		/**
-		 * Returns a new mesh by merging @lhs with @rhs.
-		 */
-		public static Mesh Union(GameObject lhs, GameObject rhs)
+        /// <summary>
+        /// Returns a new mesh by merging @lhs with @rhs.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
+        public static Mesh Union(GameObject lhs, GameObject rhs)
 		{
 			CSG_Model csg_model_a = new CSG_Model(lhs);
 			CSG_Model csg_model_b = new CSG_Model(rhs);
@@ -45,9 +51,12 @@ namespace Parabox.CSG
 			return result.ToMesh();
 		}
 
-		/**
-		 * Returns a new mesh by subtracting @rhs from @lhs.
-		 */
+        /// <summary>
+        /// Returns a new mesh by subtracting @rhs from @lhs.
+        /// </summary>
+        /// <param name="lhs">Subject</param>
+        /// <param name="rhs">Operator</param>
+        /// <returns></returns>
 		public static Mesh Subtract(GameObject lhs, GameObject rhs)
 		{
 			CSG_Model csg_model_a = new CSG_Model(lhs);
@@ -61,13 +70,15 @@ namespace Parabox.CSG
 			CSG_Model result = new CSG_Model(polygons);
 
 			return result.ToMesh();
-		}
+        }
 
-		/**
-		 * Return a new mesh by intersecting @lhs with @rhs.  This operation
-		 * is non-commutative, so set @lhs and @rhs accordingly.
-		 */
-		public static Mesh Intersect(GameObject lhs, GameObject rhs)
+        /// <summary>
+        /// Return a new mesh by intersecting @lhs with @rhs. This operation is non-commutative, so set @lhs and @rhs accordingly.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
+        public static Mesh Intersect(GameObject lhs, GameObject rhs)
 		{
 			CSG_Model csg_model_a = new CSG_Model(lhs);
 			CSG_Model csg_model_b = new CSG_Model(rhs);
