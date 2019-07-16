@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-namespace Parabox.CSGDemo
+namespace Parabox.CSG.Demo
 {
 	public class CameraControls : MonoBehaviour
 	{

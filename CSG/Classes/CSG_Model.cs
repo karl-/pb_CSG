@@ -124,8 +124,15 @@ namespace Parabox.CSG
             var mesh = new Mesh();
             CSG_VertexUtility.SetMesh(mesh, model.vertices);
             mesh.subMeshCount = model.m_Indices.Count;
-            for(int i = 0, c = mesh.subMeshCount; i < c; i++)
+            for (int i = 0, c = mesh.subMeshCount; i < c; i++)
+            {
+#if UNITY_2019_3_OR_NEWER
                 mesh.SetIndices(model.m_Indices[i], MeshTopology.Triangles, i);
+#else
+                mesh.SetIndices(model.m_Indices[i].ToArray(), MeshTopology.Triangles, i);
+#endif
+            }
+
             return mesh;
         }
     }

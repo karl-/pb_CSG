@@ -59,7 +59,7 @@ namespace Parabox.CSG
             for (int i = 0; i < polygon.vertices.Count; i++)
             {
                 float t = Vector3.Dot(this.normal, polygon.vertices[i].position) - this.w;
-                EPolygonType type = (t < -CSG.EPSILON) ? EPolygonType.Back : ((t > CSG.EPSILON) ? EPolygonType.Front : EPolygonType.Coplanar);
+                EPolygonType type = (t < -Boolean.k_Epsilon) ? EPolygonType.Back : ((t > Boolean.k_Epsilon) ? EPolygonType.Front : EPolygonType.Coplanar);
                 polygonType |= type;
                 types.Add(type);
             }

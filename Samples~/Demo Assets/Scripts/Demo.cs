@@ -1,13 +1,11 @@
-﻿using Parabox.CSG;
-using UnityEngine;
-using Booleans = Parabox.CSG.CSG;
+﻿using UnityEngine;
 
-namespace Parabox.CSGDemo
+namespace Parabox.CSG.Demo
 {
-	/**
-	 * Simple demo of CSG operations.
-	 */
-	public class CsgDemoBehaviour : MonoBehaviour
+	/// <summary>
+	/// Simple demo of CSG operations.
+	/// </summary>
+	public class Demo : MonoBehaviour
 	{
 		GameObject left, right, composite;
 		bool wireframe = false;
@@ -36,21 +34,21 @@ namespace Parabox.CSGDemo
 			ToggleWireframe();
 		}
 
-		/**
-		 * Reset the scene to it's original state.
-		 */
+		/// <summary>
+		/// Reset the scene to it's original state.
+		/// </summary>
 		public void Reset()
 		{
-			if (composite) GameObject.Destroy(composite);
-			if (left) GameObject.Destroy(left);
-			if (right) GameObject.Destroy(right);
+			if (composite) Destroy(composite);
+			if (left) Destroy(left);
+			if (right) Destroy(right);
 
-			GameObject go = GameObject.Instantiate(fodder[index]);
+			var go = Instantiate(fodder[index]);
 
-			left = GameObject.Instantiate(go.transform.GetChild(0).gameObject);
-			right = GameObject.Instantiate(go.transform.GetChild(1).gameObject);
+			left = Instantiate(go.transform.GetChild(0).gameObject);
+			right = Instantiate(go.transform.GetChild(1).gameObject);
 
-			GameObject.Destroy(go);
+			Destroy(go);
 
 			wireframeMaterial = left.GetComponent<MeshRenderer>().sharedMaterial;
 
@@ -61,28 +59,28 @@ namespace Parabox.CSGDemo
 		public void Union()
 		{
 			Reset();
-			Boolean(BoolOp.Union);
+			DoBooleanOperation(BoolOp.Union);
 		}
 
 		public void SubtractionLR()
 		{
 			Reset();
-			Boolean(BoolOp.SubtractLR);
+			DoBooleanOperation(BoolOp.SubtractLR);
 		}
 
 		public void SubtractionRL()
 		{
 			Reset();
-			Boolean(BoolOp.SubtractRL);
+			DoBooleanOperation(BoolOp.SubtractRL);
 		}
 
 		public void Intersection()
 		{
 			Reset();
-			Boolean(BoolOp.Intersect);
+			DoBooleanOperation(BoolOp.Intersect);
 		}
 
-		void Boolean(BoolOp operation)
+		void DoBooleanOperation(BoolOp operation)
 		{
 			CSG_Model result;
 
@@ -94,20 +92,19 @@ namespace Parabox.CSGDemo
 			switch (operation)
 			{
 				case BoolOp.Union:
-					result = Booleans.Union(left, right);
+					result = Boolean.Union(left, right);
 					break;
 
 				case BoolOp.SubtractLR:
-					result = Booleans.Subtract(left, right);
+					result = Boolean.Subtract(left, right);
 					break;
 
 				case BoolOp.SubtractRL:
-					result = Booleans.Subtract(right, left);
+					result = Boolean.Subtract(right, left);
 					break;
 
-				case BoolOp.Intersect:
 				default:
-					result = Booleans.Intersect(right, left);
+					result = Boolean.Intersect(right, left);
 					break;
 			}
 
@@ -117,13 +114,13 @@ namespace Parabox.CSGDemo
 
 			GenerateBarycentric(composite);
 
-			GameObject.Destroy(left);
-			GameObject.Destroy(right);
+			Destroy(left);
+			Destroy(right);
 		}
 
-		/**
-		 * Turn the wireframe overlay on or off.
-		 */
+		/// <summary>
+		/// Turn the wireframe overlay on or off.
+		/// </summary>
 		public void ToggleWireframe()
 		{
 			wireframe = !wireframe;
@@ -133,9 +130,9 @@ namespace Parabox.CSGDemo
 			start_time = Time.time;
 		}
 
-		/**
-		 * Swap the current example meshes
-		 */
+		/// <summary>
+		/// Swap the current example meshes
+		/// </summary>
 		public void ToggleExampleMeshes()
 		{
 			index++;
