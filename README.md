@@ -19,14 +19,14 @@ Example use:
 	sphere.transform.localScale = Vector3.one * 1.3;
 
 	// Perform boolean operation
-	Mesh m = CSG.Subtract(cube, sphere);
+	CSG_Model result = Boolean.Subtract(cube, sphere);
 
 	// Create a gameObject to render the result
 	composite = new GameObject();
-	composite.AddComponent<MeshFilter>().sharedMesh = m;
-	composite.AddComponent<MeshRenderer>().sharedMaterial = myMaterial;
+	composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
+	composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
 
 Result:
 
-![](bin/images/subtract.PNG?raw=true)
+![](bin~/images/subtract.PNG?raw=true)
 
