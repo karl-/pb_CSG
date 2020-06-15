@@ -2,6 +2,15 @@
 
 A C# port of [CSG.js](http://evanw.github.io/csg.js/) by Evan W for use in the Unity game engine.
 
+## Install
+
+To install, simply check out this repository in the `My Project/Packages` directory.
+
+```
+cd My\ Project/Packages
+git clone https://github.com/karl-/pb_CSG.git co.parabox.csg
+```
+
 ## Quick Start
 
 pb_CSG provides an interface in the `CSG` class for creating new meshes from boolean operations.  Each function (`Union`, `Subtract`, `Intersect`) accepts 2 gameObjects: the left and right side.  A new mesh is returned.
