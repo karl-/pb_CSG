@@ -204,7 +204,7 @@ namespace Parabox.CSG
 
             mesh.Clear();
 
-            CSG_Vertex first = vertices[0];
+            CSG_Vertex first = vertices.Count != 0 ? vertices[0] : new CSG_Vertex();
 
             if (first.hasPosition) mesh.vertices = positions;
             if (first.hasColor) mesh.colors = colors;
