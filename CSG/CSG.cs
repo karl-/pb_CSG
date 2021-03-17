@@ -51,8 +51,10 @@ namespace Parabox.CSG
         /// </summary>
         /// <param name="lhs">The base mesh of the boolean operation.</param>
         /// <param name="rhs">The input mesh of the boolean operation.</param>
+        /// <param name="back">Draw the back polygons from the result.</param>
+        /// <param name="front">Draw the front polygons of the result.</param>
         /// <returns>A new mesh if the operation succeeds, or null if an error occurs.</returns>
-        public static CSG_Model Subtract(GameObject lhs, GameObject rhs)
+        public static CSG_Model Subtract(GameObject lhs, GameObject rhs, bool back = true, bool front = true)
         {
             CSG_Model csg_model_a = new CSG_Model(lhs);
             CSG_Model csg_model_b = new CSG_Model(rhs);
@@ -60,7 +62,7 @@ namespace Parabox.CSG
             CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
             CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
 
-            List<CSG_Polygon> polygons = CSG_Node.Subtract(a, b).AllPolygons();
+            List<CSG_Polygon> polygons = CSG_Node.Subtract(a, b).AllPolygons(back, front);
 
             return new CSG_Model(polygons);
         }

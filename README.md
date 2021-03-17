@@ -25,13 +25,13 @@ Example use:
 	// Initialize two new meshes in the scene
 	GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 	GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-	sphere.transform.localScale = Vector3.one * 1.3;
+	sphere.transform.localScale = Vector3.one * 1.3f;
 
 	// Perform boolean operation
 	CSG_Model result = Boolean.Subtract(cube, sphere);
 
 	// Create a gameObject to render the result
-	composite = new GameObject();
+	var composite = new GameObject();
 	composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
 	composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
 
