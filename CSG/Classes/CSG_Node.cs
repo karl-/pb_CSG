@@ -165,7 +165,7 @@ namespace Parabox.CSG
         }
 
         // Return a list of all polygons in this BSP tree.
-        public List<CSG_Polygon> AllPolygons()
+        public List<CSG_Polygon> AllPolygons(bool back = true, bool front = true)
         {
             if (this.polygons == null)
                 this.polygons = new List<CSG_Polygon>();
@@ -173,12 +173,12 @@ namespace Parabox.CSG
             List<CSG_Polygon> list = this.polygons;
             List<CSG_Polygon> list_front = new List<CSG_Polygon>(), list_back = new List<CSG_Polygon>();
 
-            if (this.front != null)
+            if (this.front != null && front)
             {
                 list_front = this.front.AllPolygons();
             }
 
-            if (this.back != null)
+            if (this.back != null && back)
             {
                 list_back = this.back.AllPolygons();
             }
