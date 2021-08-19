@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Parabox.CSG;
 
 namespace Parabox.CSG.Demo
 {
@@ -85,11 +84,9 @@ namespace Parabox.CSG.Demo
 		{
 			Model result;
 
-			/**
-			 * All boolean operations accept two gameobjects and return a new mesh.
-			 * Order matters - left, right vs. right, left will yield different
-			 * results in some cases.
-			 */
+			// All boolean operations accept two gameobjects and return a new mesh.
+			// Order matters - left, right vs. right, left will yield different
+			// results in some cases.
 			switch (operation)
 			{
 				case BoolOp.Union:

@@ -28,7 +28,7 @@ Example use:
 	sphere.transform.localScale = Vector3.one * 1.3f;
 
 	// Perform boolean operation
-	CSG_Model result = Boolean.Subtract(cube, sphere);
+	Model result = CSG.Subtract(cube, sphere);
 
 	// Create a gameObject to render the result
 	var composite = new GameObject();

@@ -15,9 +15,6 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("Unity.ProBuilder.Editor.Tests")]
 
 namespace Parabox.CSG
 {
