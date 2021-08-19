@@ -7,7 +7,7 @@ namespace Parabox.CSG
     /// Holds information about a single vertex, and provides methods for averaging between many.
     /// <remarks>All values are optional. Where not present a default value will be substituted if necessary.</remarks>
     /// </summary>
-    struct CSG_Vertex
+    public struct Vertex
     {
         Vector3 m_Position;
         Color m_Color;
@@ -17,7 +17,7 @@ namespace Parabox.CSG
         Vector2 m_UV2;
         Vector4 m_UV3;
         Vector4 m_UV4;
-        CSG_VertexAttributes m_Attributes;
+        VertexAttributes m_Attributes;
 
         /// <value>
         /// The position in model space.
@@ -128,57 +128,57 @@ namespace Parabox.CSG
         /// </summary>
         /// <param name="attribute">The attribute or attributes to test for.</param>
         /// <returns>True if this vertex has the specified attributes set, false if they are default values.</returns>
-        public bool HasArrays(CSG_VertexAttributes attribute)
+        public bool HasArrays(VertexAttributes attribute)
         {
             return (m_Attributes & attribute) == attribute;
         }
 
         public bool hasPosition
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Position) == CSG_VertexAttributes.Position; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Position) : (m_Attributes & ~(CSG_VertexAttributes.Position)); }
+            get { return (m_Attributes & VertexAttributes.Position) == VertexAttributes.Position; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Position) : (m_Attributes & ~(VertexAttributes.Position)); }
         }
 
         public bool hasColor
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Color) == CSG_VertexAttributes.Color; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Color) : (m_Attributes & ~(CSG_VertexAttributes.Color)); }
+            get { return (m_Attributes & VertexAttributes.Color) == VertexAttributes.Color; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Color) : (m_Attributes & ~(VertexAttributes.Color)); }
         }
 
         public bool hasNormal
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Normal) == CSG_VertexAttributes.Normal; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Normal) : (m_Attributes & ~(CSG_VertexAttributes.Normal)); }
+            get { return (m_Attributes & VertexAttributes.Normal) == VertexAttributes.Normal; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Normal) : (m_Attributes & ~(VertexAttributes.Normal)); }
         }
 
         public bool hasTangent
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Tangent) == CSG_VertexAttributes.Tangent; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Tangent) : (m_Attributes & ~(CSG_VertexAttributes.Tangent)); }
+            get { return (m_Attributes & VertexAttributes.Tangent) == VertexAttributes.Tangent; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Tangent) : (m_Attributes & ~(VertexAttributes.Tangent)); }
         }
 
         public bool hasUV0
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Texture0) == CSG_VertexAttributes.Texture0; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Texture0) : (m_Attributes & ~(CSG_VertexAttributes.Texture0)); }
+            get { return (m_Attributes & VertexAttributes.Texture0) == VertexAttributes.Texture0; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Texture0) : (m_Attributes & ~(VertexAttributes.Texture0)); }
         }
 
         public bool hasUV2
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Texture1) == CSG_VertexAttributes.Texture1; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Texture1) : (m_Attributes & ~(CSG_VertexAttributes.Texture1)); }
+            get { return (m_Attributes & VertexAttributes.Texture1) == VertexAttributes.Texture1; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Texture1) : (m_Attributes & ~(VertexAttributes.Texture1)); }
         }
 
         public bool hasUV3
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Texture2) == CSG_VertexAttributes.Texture2; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Texture2) : (m_Attributes & ~(CSG_VertexAttributes.Texture2)); }
+            get { return (m_Attributes & VertexAttributes.Texture2) == VertexAttributes.Texture2; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Texture2) : (m_Attributes & ~(VertexAttributes.Texture2)); }
         }
 
         public bool hasUV4
         {
-            get { return (m_Attributes & CSG_VertexAttributes.Texture3) == CSG_VertexAttributes.Texture3; }
-            private set { m_Attributes = value ? (m_Attributes | CSG_VertexAttributes.Texture3) : (m_Attributes & ~(CSG_VertexAttributes.Texture3)); }
+            get { return (m_Attributes & VertexAttributes.Texture3) == VertexAttributes.Texture3; }
+            private set { m_Attributes = value ? (m_Attributes | VertexAttributes.Texture3) : (m_Attributes & ~(VertexAttributes.Texture3)); }
         }
 
         public void Flip()

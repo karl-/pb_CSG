@@ -1,14 +1,16 @@
 {
     "name": "Parabox.CSG.Demo",
+    "rootNamespace": "",
     "references": [
-        "Parabox.CSG"
+        "Unity.ProBuilder.Csg"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

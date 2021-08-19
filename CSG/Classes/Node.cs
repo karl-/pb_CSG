@@ -1,32 +1,31 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Parabox.CSG
 {
-    sealed class CSG_Node
+    sealed class Node
     {
-        public List<CSG_Polygon> polygons;
+        public List<Polygon> polygons;
 
-        public CSG_Node front;  /// Reference to front node.
-        public CSG_Node back;   /// Reference to front node.
+        public Node front;
+        public Node back;
 
-        public CSG_Plane plane;
+        public Plane plane;
 
-        public CSG_Node()
+        public Node()
         {
-            this.front = null;
-            this.back = null;
+            front = null;
+            back = null;
         }
 
-        public CSG_Node(List<CSG_Polygon> list)
+        public Node(List<Polygon> list)
         {
             Build(list);
-
-            // this.front = null;
-            // this.back = null;
         }
 
-        public CSG_Node(List<CSG_Polygon> list, CSG_Plane plane, CSG_Node front, CSG_Node back)
+        public Node(List<Polygon> list, Plane plane, Node front, Node back)
         {
             this.polygons = list;
             this.plane = plane;
@@ -34,16 +33,16 @@ namespace Parabox.CSG
             this.back = back;
         }
 
-        public CSG_Node Clone()
+        public Node Clone()
         {
-            CSG_Node clone = new CSG_Node(this.polygons, this.plane, this.front, this.back);
+            Node clone = new Node(this.polygons, this.plane, this.front, this.back);
 
             return clone;
         }
 
         // Remove all polygons in this BSP tree that are inside the other BSP tree
         // `bsp`.
-        public void ClipTo(CSG_Node other)
+        public void ClipTo(Node other)
         {
             this.polygons = other.ClipPolygons(this.polygons);
 
@@ -76,7 +75,7 @@ namespace Parabox.CSG
                 this.back.Invert();
             }
 
-            CSG_Node tmp = this.front;
+            Node tmp = this.front;
             this.front = this.back;
             this.back = tmp;
         }
@@ -85,58 +84,60 @@ namespace Parabox.CSG
         // new polygons are filtered down to the bottom of the tree and become new
         // nodes there. Each set of polygons is partitioned using the first polygon
         // (no heuristic is used to pick a good split).
-        public void Build(List<CSG_Polygon> list)
+        public void Build(List<Polygon> list)
         {
             if (list.Count < 1)
                 return;
 
-            if (this.plane == null || !this.plane.Valid())
+            bool newNode = plane == null || !plane.Valid(); 
+
+            if (newNode)
             {
-                this.plane = new CSG_Plane();
-                this.plane.normal = list[0].plane.normal;
-                this.plane.w = list[0].plane.w;
+                plane = new Plane();
+                plane.normal = list[0].plane.normal;
+                plane.w = list[0].plane.w;
             }
 
-
-            if (this.polygons == null)
-                this.polygons = new List<CSG_Polygon>();
-
-            List<CSG_Polygon> list_front = new List<CSG_Polygon>();
-            List<CSG_Polygon> list_back = new List<CSG_Polygon>();
+            if (polygons == null)
+                polygons = new List<Polygon>();
+                
+            var listFront = new List<Polygon>();
+            var listBack = new List<Polygon>();
 
             for (int i = 0; i < list.Count; i++)
-            {
-                this.plane.SplitPolygon(list[i], this.polygons, this.polygons, list_front, list_back);
+                plane.SplitPolygon(list[i], polygons, polygons, listFront, listBack);
+            
+            
+            if (listFront.Count > 0)
+            {                
+                // SplitPolygon can fail to correctly identify coplanar planes when the epsilon value is too low. When
+                // this happens, the front or back list will be filled and built into a new node recursively. This 
+                // check catches that case and sorts the front/back lists into the coplanar polygons collection.
+                if (newNode && list.SequenceEqual(listFront))
+                    polygons.AddRange(listFront);
+                else
+                    (front ?? (front = new Node())).Build(listFront);
             }
 
-            if (list_front.Count > 0)
+            if (listBack.Count > 0)
             {
-                if (this.front == null)
-                    this.front = new CSG_Node();
-
-                this.front.Build(list_front);
-            }
-
-            if (list_back.Count > 0)
-            {
-                if (this.back == null)
-                    this.back = new CSG_Node();
-
-                this.back.Build(list_back);
+                if (newNode && list.SequenceEqual(listBack))
+                    polygons.AddRange(listBack);
+                else
+                    (back ?? (back = new Node())).Build(listBack);
             }
         }
 
-        // Recursively remove all polygons in `polygons` that are inside this BSP
-        // tree.
-        public List<CSG_Polygon> ClipPolygons(List<CSG_Polygon> list)
+        // Recursively remove all polygons in `polygons` that are inside this BSP tree.
+        public List<Polygon> ClipPolygons(List<Polygon> list)
         {
             if (!this.plane.Valid())
             {
                 return list;
             }
 
-            List<CSG_Polygon> list_front = new List<CSG_Polygon>();
-            List<CSG_Polygon> list_back = new List<CSG_Polygon>();
+            List<Polygon> list_front = new List<Polygon>();
+            List<Polygon> list_back = new List<Polygon>();
 
             for (int i = 0; i < list.Count; i++)
             {
@@ -165,20 +166,17 @@ namespace Parabox.CSG
         }
 
         // Return a list of all polygons in this BSP tree.
-        public List<CSG_Polygon> AllPolygons(bool back = true, bool front = true)
+        public List<Polygon> AllPolygons()
         {
-            if (this.polygons == null)
-                this.polygons = new List<CSG_Polygon>();
+            List<Polygon> list = this.polygons;
+            List<Polygon> list_front = new List<Polygon>(), list_back = new List<Polygon>();
 
-            List<CSG_Polygon> list = this.polygons;
-            List<CSG_Polygon> list_front = new List<CSG_Polygon>(), list_back = new List<CSG_Polygon>();
-
-            if (this.front != null && front)
+            if (this.front != null)
             {
                 list_front = this.front.AllPolygons();
             }
 
-            if (this.back != null && back)
+            if (this.back != null)
             {
                 list_back = this.back.AllPolygons();
             }
@@ -193,31 +191,31 @@ namespace Parabox.CSG
 
         // Return a new CSG solid representing space in either this solid or in the
         // solid `csg`. Neither this solid nor the solid `csg` are modified.
-        public static CSG_Node Union(CSG_Node a1, CSG_Node b1)
+        public static Node Union(Node a1, Node b1)
         {
-            CSG_Node a = a1.Clone();
-            CSG_Node b = b1.Clone();
-
+            Node a = a1.Clone();
+            Node b = b1.Clone();
+        
             a.ClipTo(b);
             b.ClipTo(a);
             b.Invert();
             b.ClipTo(a);
             b.Invert();
-
+        
             a.Build(b.AllPolygons());
-
-            CSG_Node ret = new CSG_Node(a.AllPolygons());
-
+        
+            Node ret = new Node(a.AllPolygons());
+        
             return ret;
         }
-
+        
         // Return a new CSG solid representing space in this solid but not in the
         // solid `csg`. Neither this solid nor the solid `csg` are modified.
-        public static CSG_Node Subtract(CSG_Node a1, CSG_Node b1)
+        public static Node Subtract(Node a1, Node b1)
         {
-            CSG_Node a = a1.Clone();
-            CSG_Node b = b1.Clone();
-
+            Node a = a1.Clone();
+            Node b = b1.Clone();
+        
             a.Invert();
             a.ClipTo(b);
             b.ClipTo(a);
@@ -226,28 +224,29 @@ namespace Parabox.CSG
             b.Invert();
             a.Build(b.AllPolygons());
             a.Invert();
-
-            CSG_Node ret = new CSG_Node(a.AllPolygons());
-
+        
+            Node ret = new Node(a.AllPolygons());
+        
             return ret;
         }
 
         // Return a new CSG solid representing space both this solid and in the
         // solid `csg`. Neither this solid nor the solid `csg` are modified.
-        public static CSG_Node Intersect(CSG_Node a1, CSG_Node b1)
+        public static Node Intersect(Node a1, Node b1)
         {
-            CSG_Node a = a1.Clone();
-            CSG_Node b = b1.Clone();
+            Node a = a1.Clone();
+            Node b = b1.Clone();
 
             a.Invert();
             b.ClipTo(a);
             b.Invert();
             a.ClipTo(b);
             b.ClipTo(a);
+
             a.Build(b.AllPolygons());
             a.Invert();
 
-            CSG_Node ret = new CSG_Node(a.AllPolygons());
+            Node ret = new Node(a.AllPolygons());
 
             return ret;
         }

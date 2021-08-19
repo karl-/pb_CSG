@@ -4,7 +4,7 @@ namespace Parabox.CSG
     /// Mesh attributes bitmask.
     /// </summary>
     [System.Flags]
-    enum CSG_VertexAttributes
+    public enum VertexAttributes
     {
         /// <summary>
         /// Vertex positions.

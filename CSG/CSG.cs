@@ -15,17 +15,55 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Unity.ProBuilder.Editor.Tests")]
 
 namespace Parabox.CSG
 {
     /// <summary>
-    /// Base class for CSG operations. Contains GameObject level methods for Subtraction, Intersection, and Union operations.
-    /// The GameObjects passed to these functions will not be modified.
+    /// Base class for CSG operations. Contains GameObject level methods for Subtraction, Intersection, and Union
+    /// operations. The GameObjects passed to these functions will not be modified.
     /// </summary>
-    public static class Boolean
+    public static class CSG
     {
-        // Tolerance used by `splitPolygon()` to decide if a point is on the plane.
-        internal const float k_Epsilon = 0.00001f;
+        public enum BooleanOp
+        {
+            Intersection,
+            Union,
+            Subtraction
+        }
+
+        const float k_DefaultEpsilon = 0.00001f;
+        static float s_Epsilon = k_DefaultEpsilon;
+
+        /// <summary>
+        /// Tolerance used by <see cref="Plane.SplitPolygon"/> determine whether planes are coincident.
+        /// </summary>
+        public static float epsilon
+        {
+            get => s_Epsilon;
+            set => s_Epsilon = value;
+        }
+
+        /// <summary>
+        /// Performs a boolean operation on two GameObjects.
+        /// </summary>
+        /// <returns>A new mesh.</returns>
+        public static Model Perform(BooleanOp op, GameObject lhs, GameObject rhs)
+        {
+            switch (op)
+            {
+                case BooleanOp.Intersection:
+                    return Intersect(lhs, rhs);
+                case BooleanOp.Union:
+                    return Union(lhs, rhs);
+                case BooleanOp.Subtraction:
+                    return Subtract(lhs, rhs);
+                default:
+                    return null;
+            }
+        }
 
         /// <summary>
         /// Returns a new mesh by merging @lhs with @rhs.
@@ -33,38 +71,36 @@ namespace Parabox.CSG
         /// <param name="lhs">The base mesh of the boolean operation.</param>
         /// <param name="rhs">The input mesh of the boolean operation.</param>
         /// <returns>A new mesh if the operation succeeds, or null if an error occurs.</returns>
-        public static CSG_Model Union(GameObject lhs, GameObject rhs)
+        public static Model Union(GameObject lhs, GameObject rhs)
         {
-            CSG_Model csg_model_a = new CSG_Model(lhs);
-            CSG_Model csg_model_b = new CSG_Model(rhs);
-
-            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
-            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
-
-            List<CSG_Polygon> polygons = CSG_Node.Union(a, b).AllPolygons();
-
-            return new CSG_Model(polygons);
+            Model csg_model_a = new Model(lhs);
+            Model csg_model_b = new Model(rhs);
+        
+            Node a = new Node(csg_model_a.ToPolygons());
+            Node b = new Node(csg_model_b.ToPolygons());
+        
+            List<Polygon> polygons = Node.Union(a, b).AllPolygons();
+        
+            return new Model(polygons);
         }
-
+        
         /// <summary>
         /// Returns a new mesh by subtracting @lhs with @rhs.
         /// </summary>
         /// <param name="lhs">The base mesh of the boolean operation.</param>
         /// <param name="rhs">The input mesh of the boolean operation.</param>
-        /// <param name="back">Draw the back polygons from the result.</param>
-        /// <param name="front">Draw the front polygons of the result.</param>
         /// <returns>A new mesh if the operation succeeds, or null if an error occurs.</returns>
-        public static CSG_Model Subtract(GameObject lhs, GameObject rhs, bool back = true, bool front = true)
+        public static Model Subtract(GameObject lhs, GameObject rhs)
         {
-            CSG_Model csg_model_a = new CSG_Model(lhs);
-            CSG_Model csg_model_b = new CSG_Model(rhs);
-
-            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
-            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
-
-            List<CSG_Polygon> polygons = CSG_Node.Subtract(a, b).AllPolygons(back, front);
-
-            return new CSG_Model(polygons);
+            Model csg_model_a = new Model(lhs);
+            Model csg_model_b = new Model(rhs);
+        
+            Node a = new Node(csg_model_a.ToPolygons());
+            Node b = new Node(csg_model_b.ToPolygons());
+        
+            List<Polygon> polygons = Node.Subtract(a, b).AllPolygons();
+        
+            return new Model(polygons);
         }
 
         /// <summary>
@@ -73,17 +109,17 @@ namespace Parabox.CSG
         /// <param name="lhs">The base mesh of the boolean operation.</param>
         /// <param name="rhs">The input mesh of the boolean operation.</param>
         /// <returns>A new mesh if the operation succeeds, or null if an error occurs.</returns>
-        public static CSG_Model Intersect(GameObject lhs, GameObject rhs)
+        public static Model Intersect(GameObject lhs, GameObject rhs)
         {
-            CSG_Model csg_model_a = new CSG_Model(lhs);
-            CSG_Model csg_model_b = new CSG_Model(rhs);
+            Model csg_model_a = new Model(lhs);
+            Model csg_model_b = new Model(rhs);
 
-            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
-            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
+            Node a = new Node(csg_model_a.ToPolygons());
+            Node b = new Node(csg_model_b.ToPolygons());
 
-            List<CSG_Polygon> polygons = CSG_Node.Intersect(a, b).AllPolygons();
+            List<Polygon> polygons = Node.Intersect(a, b).AllPolygons();
 
-            return new CSG_Model(polygons);
+            return new Model(polygons);
         }
     }
 }

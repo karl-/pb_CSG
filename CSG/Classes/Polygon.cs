@@ -6,16 +6,16 @@ namespace Parabox.CSG
     /// <summary>
     /// Represents a polygon face with an arbitrary number of vertices.
     /// </summary>
-    sealed class CSG_Polygon
+    sealed class Polygon
     {
-        public List<CSG_Vertex> vertices;
-        public CSG_Plane plane;
+        public List<Vertex> vertices;
+        public Plane plane;
         public Material material;
 
-        public CSG_Polygon(List<CSG_Vertex> list, Material mat)
+        public Polygon(List<Vertex> list, Material mat)
         {
             vertices = list;
-            plane = new CSG_Plane(list[0].position, list[1].position, list[2].position);
+            plane = new Plane(list[0].position, list[1].position, list[2].position);
             material = mat;
         }
 
@@ -31,7 +31,7 @@ namespace Parabox.CSG
 
         public override string ToString()
         {
-            return "normal: " + plane.normal;
+            return $"[{vertices.Count}] {plane.normal}";
         }
     }
 }

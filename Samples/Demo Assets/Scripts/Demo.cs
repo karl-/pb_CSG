@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Parabox.CSG;
 
 namespace Parabox.CSG.Demo
 {
@@ -82,7 +83,7 @@ namespace Parabox.CSG.Demo
 
 		void DoBooleanOperation(BoolOp operation)
 		{
-			CSG_Model result;
+			Model result;
 
 			/**
 			 * All boolean operations accept two gameobjects and return a new mesh.
@@ -92,19 +93,19 @@ namespace Parabox.CSG.Demo
 			switch (operation)
 			{
 				case BoolOp.Union:
-					result = Boolean.Union(left, right);
+					result = CSG.Union(left, right);
 					break;
 
 				case BoolOp.SubtractLR:
-					result = Boolean.Subtract(left, right);
+					result = CSG.Subtract(left, right);
 					break;
 
 				case BoolOp.SubtractRL:
-					result = Boolean.Subtract(right, left);
+					result = CSG.Subtract(right, left);
 					break;
 
 				default:
-					result = Boolean.Intersect(right, left);
+					result = CSG.Intersect(right, left);
 					break;
 			}
 

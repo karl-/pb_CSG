@@ -8,9 +8,9 @@ namespace Parabox.CSG
     /// <summary>
     /// Representation of a mesh in CSG terms. Contains methods for translating to and from UnityEngine.Mesh.
     /// </summary>
-    public sealed class CSG_Model
+    public sealed class Model
     {
-        internal List<CSG_Vertex> vertices;
+        List<Vertex> m_Vertices;
         List<Material> m_Materials;
         List<List<int>> m_Indices;
 
@@ -20,18 +20,24 @@ namespace Parabox.CSG
             set { m_Materials = value; }
         }
 
+        public List<Vertex> vertices
+        {
+            get { return m_Vertices; }
+            set { m_Vertices = value; }
+        }
+
+        public List<List<int>> indices
+        {
+            get { return m_Indices; }
+            set { m_Indices = value; }
+        }
+
         public Mesh mesh
         {
             get { return (Mesh)this; }
         }
 
-        public CSG_Model()
-        {
-            vertices = new List<CSG_Vertex>();
-            m_Indices = new List<List<int>>();
-        }
-
-        public CSG_Model(GameObject gameObject) :
+        public Model(GameObject gameObject) :
             this(gameObject.GetComponent<MeshFilter>()?.sharedMesh,
                 gameObject.GetComponent<MeshRenderer>()?.sharedMaterials,
                 gameObject.GetComponent<Transform>())
@@ -41,7 +47,7 @@ namespace Parabox.CSG
         /// <summary>
         /// Initialize a Model from a UnityEngine.Mesh and transform.
         /// </summary>
-        public CSG_Model(Mesh mesh, Material[] materials, Transform transform)
+        public Model(Mesh mesh, Material[] materials, Transform transform)
         {
             if(mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -49,7 +55,7 @@ namespace Parabox.CSG
             if(transform == null)
                 throw new ArgumentNullException("transform");
 
-            vertices = CSG_VertexUtility.GetVertices(mesh).Select(x => transform.TransformVertex(x)).ToList();
+            m_Vertices = VertexUtility.GetVertices(mesh).Select(x => transform.TransformVertex(x)).ToList();
             m_Materials = new List<Material>(materials);
             m_Indices = new List<List<int>>();
 
@@ -63,16 +69,16 @@ namespace Parabox.CSG
             }
         }
 
-        internal CSG_Model(List<CSG_Polygon> list)
+        internal Model(List<Polygon> polygons)
         {
-            vertices = new List<CSG_Vertex>();
+            m_Vertices = new List<Vertex>();
             Dictionary<Material, List<int>> submeshes = new Dictionary<Material, List<int>>();
 
             int p = 0;
 
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < polygons.Count; i++)
             {
-                CSG_Polygon poly = list[i];
+                Polygon poly = polygons[i];
                 List<int> indices;
 
                 if (!submeshes.TryGetValue(poly.material, out indices))
@@ -80,13 +86,13 @@ namespace Parabox.CSG
 
                 for (int j = 2; j < poly.vertices.Count; j++)
                 {
-                    vertices.Add(poly.vertices[0]);
+                    m_Vertices.Add(poly.vertices[0]);
                     indices.Add(p++);
 
-                    vertices.Add(poly.vertices[j - 1]);
+                    m_Vertices.Add(poly.vertices[j - 1]);
                     indices.Add(p++);
 
-                    vertices.Add(poly.vertices[j]);
+                    m_Vertices.Add(poly.vertices[j]);
                     indices.Add(p++);
                 }
             }
@@ -95,9 +101,9 @@ namespace Parabox.CSG
             m_Indices = submeshes.Values.ToList();
         }
 
-        internal List<CSG_Polygon> ToPolygons()
+        internal List<Polygon> ToPolygons()
         {
-            List<CSG_Polygon> list = new List<CSG_Polygon>();
+            List<Polygon> list = new List<Polygon>();
 
             for (int s = 0, c = m_Indices.Count; s < c; s++)
             {
@@ -105,24 +111,24 @@ namespace Parabox.CSG
 
                 for (int i = 0, ic = indices.Count; i < indices.Count; i += 3)
                 {
-                    List<CSG_Vertex> triangle = new List<CSG_Vertex>()
+                    List<Vertex> triangle = new List<Vertex>()
                     {
-                        vertices[indices[i + 0]],
-                        vertices[indices[i + 1]],
-                        vertices[indices[i + 2]]
+                        m_Vertices[indices[i + 0]],
+                        m_Vertices[indices[i + 1]],
+                        m_Vertices[indices[i + 2]]
                     };
 
-                    list.Add(new CSG_Polygon(triangle, m_Materials[s]));
+                    list.Add(new Polygon(triangle, m_Materials[s]));
                 }
             }
 
             return list;
         }
 
-        public static explicit operator Mesh(CSG_Model model)
+        public static explicit operator Mesh(Model model)
         {
             var mesh = new Mesh();
-            CSG_VertexUtility.SetMesh(mesh, model.vertices);
+            VertexUtility.SetMesh(mesh, model.m_Vertices);
             mesh.subMeshCount = model.m_Indices.Count;
             for (int i = 0, c = mesh.subMeshCount; i < c; i++)
             {
