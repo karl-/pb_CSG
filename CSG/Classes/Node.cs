@@ -86,45 +86,59 @@ namespace Parabox.CSG
         // (no heuristic is used to pick a good split).
         public void Build(List<Polygon> list)
         {
-            if (list.Count < 1)
-                return;
+            Stack<(Node, List<Polygon>)> buildStack = new Stack<(Node, List<Polygon>)>();
+            buildStack.Push((this, list));
 
-            bool newNode = plane == null || !plane.Valid(); 
-
-            if (newNode)
+            while (buildStack.Count > 0)
             {
-                plane = new Plane();
-                plane.normal = list[0].plane.normal;
-                plane.w = list[0].plane.w;
-            }
+                var current = buildStack.Pop();
+                Node currentNode = current.Item1;
+                List<Polygon> currentList = current.Item2;
 
-            if (polygons == null)
-                polygons = new List<Polygon>();
-                
-            var listFront = new List<Polygon>();
-            var listBack = new List<Polygon>();
+                if (currentList.Count < 1)
+                    continue;
 
-            for (int i = 0; i < list.Count; i++)
-                plane.SplitPolygon(list[i], polygons, polygons, listFront, listBack);
-            
-            
-            if (listFront.Count > 0)
-            {                
-                // SplitPolygon can fail to correctly identify coplanar planes when the epsilon value is too low. When
-                // this happens, the front or back list will be filled and built into a new node recursively. This 
-                // check catches that case and sorts the front/back lists into the coplanar polygons collection.
-                if (newNode && list.SequenceEqual(listFront))
-                    polygons.AddRange(listFront);
-                else
-                    (front ?? (front = new Node())).Build(listFront);
-            }
+                bool newNode = currentNode.plane == null || !currentNode.plane.Valid();
 
-            if (listBack.Count > 0)
-            {
-                if (newNode && list.SequenceEqual(listBack))
-                    polygons.AddRange(listBack);
-                else
-                    (back ?? (back = new Node())).Build(listBack);
+                if (newNode)
+                {
+                    currentNode.plane = new Plane();
+                    currentNode.plane.normal = currentList[0].plane.normal;
+                    currentNode.plane.w = currentList[0].plane.w;
+                }
+
+                if (currentNode.polygons == null)
+                    currentNode.polygons = new List<Polygon>();
+
+                var listFront = new List<Polygon>();
+                var listBack = new List<Polygon>();
+
+                for (int i = 0; i < currentList.Count; i++)
+                    currentNode.plane.SplitPolygon(currentList[i], currentNode.polygons, currentNode.polygons, listFront, listBack);
+
+                if (listFront.Count > 0)
+                {
+                    if (newNode && currentList.SequenceEqual(listFront))
+                        currentNode.polygons.AddRange(listFront);
+                    else
+                    {
+                        if (currentNode.front == null)
+                            currentNode.front = new Node();
+                        buildStack.Push((currentNode.front, listFront));
+                    }
+                }
+
+                if (listBack.Count > 0)
+                {
+                    if (newNode && currentList.SequenceEqual(listBack))
+                        currentNode.polygons.AddRange(listBack);
+                    else
+                    {
+                        if (currentNode.back == null)
+                            currentNode.back = new Node();
+                        buildStack.Push((currentNode.back, listBack));
+                    }
+                }
             }
         }
 
